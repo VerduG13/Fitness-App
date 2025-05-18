@@ -1,0 +1,151 @@
+/* styles.css */
+
+html {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  scroll-behavior: smooth;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+:root {
+  --color-agua:             #2e7d32;
+  --color-ejercicio-start:  #ff9800;
+  --color-ejercicio-end:    #f44336;
+  --color-sueno:            #1565c0;
+  --color-animo:            #fbc02d;
+
+  --color-primario:         #0077cc;
+  --color-hover:            #005fa3;
+  --gris-claro:             #f9f9f9;
+  --gris-medio:             #ddd;
+  --gris-texto:             #333;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  color: var(--gris-texto);
+  background: var(--gris-claro);
+}
+
+header {
+  background: #fff;
+  padding: 1rem;
+  border-bottom: 1px solid var(--gris-medio);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 1rem;
+}
+
+nav a {
+  text-decoration: none;
+  color: var(--color-primario);
+}
+
+nav a.active {
+  font-weight: bold;
+}
+
+.conventions {
+  background: #fff;
+  padding: 1rem;
+  margin: 1rem;
+  border-radius: 8px;
+}
+
+.legend {
+  display: flex;
+  gap: 2rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.circle {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+}
+
+.circle.alimenticio { 
+  background: var(--color-agua); 
+}
+
+.circle.ejercicio { 
+  background: linear-gradient(
+    45deg,
+    var(--color-ejercicio-start),
+    var(--color-ejercicio-end)
+  ); 
+}
+
+.circle.sueno { 
+  background: var(--color-sueno); 
+}
+
+.circle.animo { 
+  background: var(--color-animo); 
+}
+
+main {
+  padding: 1rem;
+}
+
+section {
+  background: #fff;
+  margin: 1rem 0;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+form {
+  display: grid;
+  gap: 0.5rem;
+}
+
+label {
+  font-weight: 600;
+}
+
+input,
+button {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  background: var(--color-primario);
+  color: #fff;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+
+button:hover {
+  background: var(--color-hover);
+}
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  background: #fff;
+  border-top: 1px solid var(--gris-medio);
+}

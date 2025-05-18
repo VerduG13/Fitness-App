@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hábitos Saludables</title>
+  <link rel="stylesheet" href="../CSS/styles.css">
+</head>
+<body>
+  <header>
+    <h1>Hábitos Saludables</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="#registro">Registro</a></li>
+        <li><a href="#estadisticas">Estadísticas</a></li>
+        <li><a href="#configuracion">Configuración</a></li>
+        <li><a href="historico.html">Histórico</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="conventions">
+    <h2>Convenciones de colores</h2>
+    <div class="legend">
+      <div class="legend-item">
+        <span class="circle alimenticio"></span>
+        <span>Alimenticio (L)</span>
+      </div>
+      <div class="legend-item">
+        <span class="circle ejercicio"></span>
+        <span>Ejercicio (min)</span>
+      </div>
+      <div class="legend-item">
+        <span class="circle sueno"></span>
+        <span>Sueño (horas)</span>
+      </div>
+      <div class="legend-item">
+        <span class="circle animo"></span>
+        <span>Estado de ánimo (1–10)</span>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <!-- 1. Registro -->
+    <section id="registro">
+      <h2>Registro de hábitos</h2>
+      <form id="registro-form">
+        <label for="agua">Agua (L):</label>
+        <input type="number" id="agua" name="agua" min="0" step="0.1" required>
+
+        <label for="ejercicio">Ejercicio (min):</label>
+        <input type="number" id="ejercicio" name="ejercicio" min="0" required>
+
+        <label for="sueno">Sueño (horas):</label>
+        <input type="number" id="sueno" name="sueno" min="0" step="0.1" required>
+
+        <label for="animo">Estado de ánimo (1–10):</label>
+        <input type="number" id="animo" name="animo" min="1" max="10" step="1" required>
+
+        <button type="submit">Guardar</button>
+      </form>
+    </section>
+
+    <!-- 2. Estadísticas -->
+    <section id="estadisticas">
+      <h2>Estadísticas</h2>
+      <div class="charts">
+        <canvas id="chart-agua" width="300" height="200"></canvas>
+        <canvas id="chart-ejercicio" width="300" height="200"></canvas>
+        <canvas id="chart-sueno" width="300" height="200"></canvas>
+        <canvas id="chart-animo" width="300" height="200"></canvas>
+      </div>
+    </section>
+
+    <!-- 3. Configuración -->
+    <section id="configuracion">
+      <h2>Configuración de metas y alertas</h2>
+      <form id="config-form">
+        <label for="meta-agua">Meta diaria de agua (L):</label>
+        <input type="number" id="meta-agua" name="meta-agua" min="0" step="0.1">
+
+        <label for="recordatorio-agua">Recordatorio de agua (HH:MM):</label>
+        <input type="time" id="recordatorio-agua" name="recordatorio-agua">
+
+        <label for="meta-ejercicio">Meta diaria de ejercicio (min):</label>
+        <input type="number" id="meta-ejercicio" name="meta-ejercicio" min="0">
+
+        <label for="recordatorio-ejercicio">Recordatorio de ejercicio (HH:MM):</label>
+        <input type="time" id="recordatorio-ejercicio" name="recordatorio-ejercicio">
+
+        <label for="meta-sueno">Meta diaria de sueño (horas):</label>
+        <input type="number" id="meta-sueno" name="meta-sueno" min="0" step="0.1">
+
+        <label for="recordatorio-sueno">Recordatorio de sueño (HH:MM):</label>
+        <input type="time" id="recordatorio-sueno" name="recordatorio-sueno">
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; Germán Verdugo - Desarrollo Web</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="../JavaScript/script.js"></script>
+</body>
+</html>

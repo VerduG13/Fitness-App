@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Histórico de Hábitos</title>
+  <link rel="stylesheet" href="../CSS/styles.css">
+</head>
+<body>
+  <header>
+    <h1>Histórico de Hábitos</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="historico.html" class="active">Histórico</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section id="historico">
+      <h2>Registros guardados</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Agua (L)</th>
+            <th>Ejercicio (min)</th>
+            <th>Sueño (h)</th>
+            <th>Ánimo</th>
+          </tr>
+        </thead>
+        <tbody id="historico-body">
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; Germán Verdugo - Desarrollo Web</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="../JavaScript/script.js"></script>
+</body>
+</html>
