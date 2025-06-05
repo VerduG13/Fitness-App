@@ -1,46 +1,87 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Histórico de Hábitos</title>
-  <link rel="stylesheet" href="../CSS/styles.css">
+  <link rel="stylesheet" href="../CSS/styles.css" />
 </head>
 <body>
-  <header>
-    <h1>Histórico de Hábitos</h1>
-    <nav>
-      <ul>
-        <li><a href="index.html">Inicio</a></li>
-        <li><a href="historico.html" class="active">Histórico</a></li>
-      </ul>
-    </nav>
-  </header>
+  <!-- Sección de Login (oculta si hay sesión activa) -->
+  <section id="login-section">
+    <h2>Iniciar sesión</h2>
+    <form id="login-form">
+      <label for="login-email">Email:</label>
+      <input type="email" id="login-email" name="login-email" required />
 
-  <main>
-    <section id="historico">
-      <h2>Registros guardados</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Fecha</th>
-            <th>Agua (L)</th>
-            <th>Ejercicio (min)</th>
-            <th>Sueño (h)</th>
-            <th>Ánimo</th>
-          </tr>
-        </thead>
-        <tbody id="historico-body">
-        </tbody>
-      </table>
-    </section>
-  </main>
+      <label for="login-password">Contraseña:</label>
+      <input type="password" id="login-password" name="login-password" required />
 
-  <footer>
-    <p>&copy; Germán Verdugo - Desarrollo Web</p>
-  </footer>
+      <button type="submit">Iniciar sesión</button>
+      <p id="login-error" class="error-message"></p>
+    </form>
+    <p>¿No tienes cuenta? <a href="#" id="show-signup">Regístrate</a></p>
+  </section>
 
+  <!-- Sección de Signup (oculta si hay sesión activa) -->
+  <section id="signup-section" style="display: none;">
+    <h2>Crear cuenta</h2>
+    <form id="signup-form">
+      <label for="signup-email">Email:</label>
+      <input type="email" id="signup-email" name="signup-email" required />
+
+      <label for="signup-password">Contraseña:</label>
+      <input type="password" id="signup-password" name="signup-password" required />
+
+      <button type="submit">Registrarme</button>
+      <p id="signup-error" class="error-message"></p>
+    </form>
+    <p>¿Ya tienes cuenta? <a href="#" id="show-login">Inicia sesión</a></p>
+  </section>
+
+  <!-- Botón de Logout -->
+  <button id="logout" style="display: none;">Cerrar sesión</button>
+
+  <!-- Contenido principal (oculto si no hay sesión) -->
+  <div id="app-content" style="display: none;">
+    <header>
+      <h1>Histórico de Hábitos</h1>
+      <nav>
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="historico.html" class="active">Histórico</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section id="historico">
+        <h2>Registros guardados</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Agua (L)</th>
+              <th>Ejercicio (min)</th>
+              <th>Sueño (h)</th>
+              <th>Ánimo</th>
+            </tr>
+          </thead>
+          <tbody id="historico-body">
+            <!-- Filas generadas por script.js -->
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; Germán Verdugo - Desarrollo Web</p>
+    </footer>
+  </div>
+
+  <!-- Chart.js (CDN) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lógica JavaScript -->
   <script src="../JavaScript/script.js"></script>
 </body>
 </html>

@@ -143,6 +143,12 @@ button:hover {
   background: var(--color-hover);
 }
 
+.error-message {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 0.3rem;
+}
+
 footer {
   text-align: center;
   padding: 1rem;
