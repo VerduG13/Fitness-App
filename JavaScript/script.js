@@ -7,11 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initCharts();
   initHistorico();
   setupLogout();
+  initConfig();
+  startReminderLoop();
 });
 
-/**
- * Controla qué secciones se muestran según exista o no userId en sessionStorage.
- */
 function checkSession() {
   const userId = sessionStorage.getItem('userId');
   const appContent = document.getElementById('app-content');
@@ -20,13 +19,11 @@ function checkSession() {
   const logoutBtn = document.getElementById('logout');
 
   if (userId) {
-    // Usuario logueado
     loginSection.style.display = 'none';
     signupSection.style.display = 'none';
     logoutBtn.style.display = 'inline-block';
     appContent.style.display = 'block';
   } else {
-    // Sin sesión
     loginSection.style.display = 'block';
     signupSection.style.display = 'none';
     logoutBtn.style.display = 'none';
@@ -34,9 +31,6 @@ function checkSession() {
   }
 }
 
-/**
- * Inicializa lógica de los formularios de login y signup, así como mostrar/ocultar secciones.
- */
 function initLoginSignup() {
   // Mostrar formulario de registro desde login
   document.getElementById('show-signup').addEventListener('click', e => {
@@ -54,7 +48,7 @@ function initLoginSignup() {
 
   // Registro de usuario
   const signupForm = document.getElementById('signup-form');
-  signupForm.addEventListener('submit', async e => {
+  signupForm.addEventListener('submit', e => {
     e.preventDefault();
     const email = signupForm['signup-email'].value;
     const password = signupForm['signup-password'].value;
@@ -62,28 +56,29 @@ function initLoginSignup() {
     signupError.textContent = '';
 
     try {
-      const resp = await fetch('/api/usuarios', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      if (resp.status === 201) {
-        const json = await resp.json();
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', 'http://localhost:8080/user/create', false);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.send(JSON.stringify({ email, password }));
+
+      if (xhr.status === 201) {
+        const json = JSON.parse(xhr.responseText);
         sessionStorage.setItem('userId', json.id);
+        sessionStorage.setItem('userEmail', json.email)
         checkSession();
-      } else if (resp.status === 409) {
+      } else if (xhr.status === 409) {
         signupError.textContent = 'Ese correo ya está en uso.';
       } else {
         signupError.textContent = 'Error inesperado. Intenta de nuevo.';
       }
-    } catch {
+    } catch (err) {
       signupError.textContent = 'No se pudo conectar al servidor.';
     }
   });
 
   // Login de usuario
   const loginForm = document.getElementById('login-form');
-  loginForm.addEventListener('submit', async e => {
+  loginForm.addEventListener('submit', e => {
     e.preventDefault();
     const email = loginForm['login-email'].value;
     const password = loginForm['login-password'].value;
@@ -91,107 +86,120 @@ function initLoginSignup() {
     loginError.textContent = '';
 
     try {
-      const resp = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      if (resp.status === 200) {
-        const json = await resp.json();
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', 'http://localhost:8080/user/auth', false);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.send(JSON.stringify({ email, password }));
+
+      if (xhr.status === 200) {
+        const json = JSON.parse(xhr.responseText);
         sessionStorage.setItem('userId', json.id);
+        sessionStorage.setItem('userEmail', json.email);
         checkSession();
       } else {
         loginError.textContent = 'Email o contraseña incorrectos.';
       }
-    } catch {
+    } catch (err) {
       loginError.textContent = 'No se pudo conectar al servidor.';
     }
   });
 }
 
-/**
- * Inicializa el formulario de registro de hábitos para enviarlo al backend.
- */
+
 function initForm() {
   const form = document.getElementById('registro-form');
   if (!form) return;
 
-  form.addEventListener('submit', async e => {
+  form.addEventListener('submit', e => {
     e.preventDefault();
+  
     const hoy = new Date().toISOString().slice(0, 10);
-    let registros = [];
-    try {
-      registros = await getRegistros();
-    } catch {
-      alert('No se pudo obtener registros del servidor');
-      return;
-    }
-
-    // Verificar si ya existe al menos un registro para hoy
-    const existeHoy = registros.some(r => r.fecha === hoy);
-    if (existeHoy) {
-      const confirmar = confirm(
-        'Ya tienes un registro para la fecha de hoy, ¿quieres añadir otro?'
-      );
-      if (!confirmar) return;
-    }
-
-    // Construir el objeto registro
     const registro = {
-      fecha: hoy,
-      agua: Number(form.agua.value),
-      ejercicio: Number(form.ejercicio.value),
-      sueno: Number(form.sueno.value),
-      animo: Number(form.animo.value)
+      registrationDate: hoy,
+      water: Number(form.agua.value),
+      exercise: Number(form.ejercicio.value),
+      sleep: Number(form.sueno.value),
+      moodScore: Number(form.animo.value)
     };
 
     try {
-      await saveRegistro(registro);
+      saveRegistro(registro); 
       form.reset();
       updateAllCharts();
     } catch {
-      alert('No se pudo guardar el registro en el servidor.');
+      
     }
   });
 }
 
-/**
- * Obtiene todos los registros del backend para el usuario actual.
- * Retorna un array de objetos { fecha, agua, ejercicio, sueno, animo }.
- */
-async function getRegistros() {
+//Retorna un array de objetos fecha, agua, ejercicio, sueno, animo
+function getRegistros() {
   const userId = sessionStorage.getItem('userId');
-  const resp = await fetch(`/api/registros?userId=${userId}`);
-  if (!resp.ok) throw new Error('Error al obtener registros');
-  return await resp.json();
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', `http://localhost:8080/habit/user/${userId}`, false);
+  xhr.send(null);
+
+  if (xhr.status === 200) {
+    return JSON.parse(xhr.responseText);
+  } else {
+    throw new Error('Error al obtener registros');
+  }
 }
 
-/**
- * Envía al backend un nuevo registro asociado al usuario.
- * El backend devuelve JSON con { success: true } o devuelve error.
- */
-async function saveRegistro(registro) {
+function getChartData() {
+  const userId = sessionStorage.getItem('userId');
+  const hoy = new Date();
+  const date = hoy.toISOString().slice(0, 10);
+  const body = { userId, date };
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', `http://localhost:8080/habit/chartData`, false);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.send(JSON.stringify(body));
+
+  if (xhr.status === 200) {
+    return JSON.parse(xhr.responseText);
+  } else {
+    throw new Error('Error al obtener registros');
+  }
+}
+
+
+function saveRegistro(registro) {
   const userId = sessionStorage.getItem('userId');
   const body = { ...registro, userId };
-  const resp = await fetch('/api/registros', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
-  if (!resp.ok) throw new Error('Error al guardar registro');
-  return await resp.json();
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', 'http://localhost:8080/habit/create', false);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.send(JSON.stringify(body));
+
+  if (xhr.status === 200 || xhr.status === 201) {
+    // Éxito: mostramos un popup
+    alert('Hábito registrado correctamente');
+  } else {
+    // Error: intentamos leer el mensaje de la respuesta
+    let errorMsg = 'Error al guardar registro';
+    try {
+      const json = JSON.parse(xhr.responseText);
+      if (json.errorMessage) {
+        errorMsg = json.errorMessage;
+      }
+    } catch (e) {
+      if (xhr.responseText) {
+        errorMsg = xhr.responseText;
+      }
+    }
+    alert(errorMsg);
+    throw new Error(errorMsg);
+  }
 }
 
-/**
- * Inicializa la tabla de histórico con todos los registros del usuario desde el backend.
- */
-async function initHistorico() {
+function initHistorico() {
   const tbody = document.getElementById('historico-body');
   if (!tbody) return;
 
   let registros = [];
   try {
-    registros = await getRegistros();
+    registros = getRegistros(); 
   } catch {
     console.error('No se pudieron cargar registros históricos.');
     return;
@@ -201,11 +209,11 @@ async function initHistorico() {
   registros.forEach(r => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td>${r.fecha}</td>
-      <td>${r.agua.toFixed(1)}</td>
-      <td>${r.ejercicio}</td>
-      <td>${r.sueno.toFixed(1)}</td>
-      <td>${r.animo}</td>
+      <td>${r.registrationDate}</td>
+      <td>${r.water.toFixed(1)}</td>
+      <td>${r.exercise}</td>
+      <td>${r.sleep.toFixed(1)}</td>
+      <td>${r.moodScore}</td>
     `;
     tbody.appendChild(tr);
   });
@@ -219,9 +227,7 @@ const colorSueno   = rs.getPropertyValue('--color-sueno').trim();
 const colorAnimo   = rs.getPropertyValue('--color-animo').trim();
 
 let charts = {};
-/**
- * Configura las cuatro gráficas: tres de barras (agua, ejercicio, sueño) y un scatter (ánimo).
- */
+
 function initCharts() {
   // Gráfico de Agua
   const ctxAgua = document.getElementById('chart-agua');
@@ -277,119 +283,128 @@ function initCharts() {
     });
   }
 
-  // Gráfico de Ánimo (scatter con línea)
+  // Gráfico de Animo
   const ctxAn = document.getElementById('chart-animo');
   if (ctxAn) {
     charts.animo = new Chart(ctxAn, {
-      type: 'scatter',
+      type: 'bar',
       data: {
+        labels: [], 
         datasets: [{
           label: 'Ánimo',
-          data: [],
+          data: [],             
           backgroundColor: colorAnimo,
-          showLine: true,
           borderColor: colorAnimo,
-          borderWidth: 2
+          borderWidth: 1
         }]
       },
       options: {
         scales: {
-          x: {
-            type: 'time',
-            time: {
-              parser: 'YYYY-MM-DD',
-              unit: 'day',
-              displayFormats: { day: 'MMM D' }
-            },
-            title: { display: true, text: 'Fecha' }
-          },
-          y: {
-            beginAtZero: true,
-            min: 0,
-            max: 10,
-            title: { display: true, text: 'Ánimo' }
-          }
+          y: { beginAtZero: true },
+          x: { title: { display: true, text: 'Fecha' } }
         }
       }
     });
   }
-
-  // Carga inicial de datos
   updateAllCharts();
 }
 
-/**
- * Recupera los datos de los últimos dos días (ayer y hoy) y actualiza cada gráfico.
- */
-async function updateAllCharts() {
-  let registros = [];
+function updateAllCharts() {
+  let chartData = undefined;
   try {
-    registros = await getRegistros();
+    chartData = getChartData();
   } catch {
     console.error('Fallo al cargar registros para gráficas');
     return;
   }
-
-  // Fechas: hoy y ayer en formato "YYYY-MM-DD"
-  const hoy = new Date();
-  const strHoy = hoy.toISOString().slice(0, 10);
-  const ayer = new Date(hoy.getTime() - 24 * 60 * 60 * 1000);
-  const strAyer = ayer.toISOString().slice(0, 10);
-
-  // Filtrar registros por fecha
-  const regsHoy = registros.filter(r => r.fecha === strHoy);
-  const regsAyer = registros.filter(r => r.fecha === strAyer);
-
-  // Sumas diarias
-  const sumaAguaHoy    = regsHoy.map(r => r.agua).reduce((s, v) => s + v, 0);
-  const sumaEjHoy      = regsHoy.map(r => r.ejercicio).reduce((s, v) => s + v, 0);
-  const sumaSuenoHoy   = regsHoy.map(r => r.sueno).reduce((s, v) => s + v, 0);
-  const datosAnimoHoy  = regsHoy.map(r => ({ x: strHoy, y: r.animo }));
-
-  const sumaAguaAyer    = regsAyer.map(r => r.agua).reduce((s, v) => s + v, 0);
-  const sumaEjAyer      = regsAyer.map(r => r.ejercicio).reduce((s, v) => s + v, 0);
-  const sumaSuenoAyer   = regsAyer.map(r => r.sueno).reduce((s, v) => s + v, 0);
-  const datosAnimoAyer  = regsAyer.map(r => ({ x: strAyer, y: r.animo }));
-
-  const fechas = [strAyer, strHoy];
+  const fechas = chartData.dates;
 
   // Actualizar gráfica de Agua
   if (charts.agua) {
     charts.agua.data.labels = fechas;
-    charts.agua.data.datasets[0].data = [sumaAguaAyer, sumaAguaHoy];
+    charts.agua.data.datasets[0].data = chartData.water;
     charts.agua.update();
   }
 
   // Actualizar gráfica de Ejercicio
   if (charts.ejercicio) {
     charts.ejercicio.data.labels = fechas;
-    charts.ejercicio.data.datasets[0].data = [sumaEjAyer, sumaEjHoy];
+    charts.ejercicio.data.datasets[0].data = chartData.exercise;
     charts.ejercicio.update();
   }
 
   // Actualizar gráfica de Sueño
   if (charts.sueno) {
     charts.sueno.data.labels = fechas;
-    charts.sueno.data.datasets[0].data = [sumaSuenoAyer, sumaSuenoHoy];
+    charts.sueno.data.datasets[0].data = chartData.sleep;
     charts.sueno.update();
   }
 
-  // Actualizar scatter de Ánimo
+  // Actualizar gráfica de Ánimo
   if (charts.animo) {
-    const datosAnimo = datosAnimoAyer.concat(datosAnimoHoy);
-    charts.animo.data.datasets[0].data = datosAnimo;
+    charts.animo.data.labels = fechas;
+    charts.animo.data.datasets[0].data = chartData.mood;
     charts.animo.update();
   }
 }
 
-/**
- * Configura el botón de cerrar sesión.
- */
 function setupLogout() {
   const btnLogout = document.getElementById('logout');
   if (!btnLogout) return;
   btnLogout.addEventListener('click', () => {
     sessionStorage.removeItem('userId');
-    window.location.href = 'index.html';
+    sessionStorage.removeItem('userEmail');
+    checkSession();
   });
+}
+
+const EMAIL_SERVICE   = 'service_t1r6yji';
+const EMAIL_TEMPLATE  = 'template_noo02xb';
+const EMAIL_PUBLICKEY = '77nm1jj0tkky0hsTt';
+
+function sendReminderEmail(toEmail, habitName, habitValue, habitMeasure) { 
+  const params = { to_email: toEmail, habit_name: habitName, habit_value: habitValue, habit_measure: habitMeasure };
+  emailjs.send(EMAIL_SERVICE, EMAIL_TEMPLATE, params, EMAIL_PUBLICKEY)
+    .then(resp => console.log('EmailJS OK', resp.status))
+    .catch(err  => console.error('EmailJS error', err));
+}
+
+function initConfig() {
+  const cfgForm = document.getElementById('config-form');
+  if (!cfgForm) return;
+
+  cfgForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const cfg = {
+      aguaHora:             cfgForm['recordatorio-agua'].value,
+      aguaMeta:             cfgForm['meta-agua'].value,
+      ejercicioHora:        cfgForm['recordatorio-ejercicio'].value,
+      ejercicioMeta:        cfgForm['meta-ejercicio'].value,
+      suenoHora:            cfgForm['recordatorio-sueno'].value,
+      suenoMeta:            cfgForm['meta-sueno'].value,
+    };
+    localStorage.setItem('habit-reminders', JSON.stringify(cfg));
+    alert('Recordatorios guardados ✅');
+  });
+
+  // Rellenar campos al abrir la página
+  const stored = JSON.parse(localStorage.getItem('habit-reminders') || '{}');
+  if (stored.aguaHora)      cfgForm['recordatorio-agua'].value      = stored.aguaHora;
+  if (stored.aguaMeta)      cfgForm['meta-agua'].value      = stored.aguaMeta;
+  if (stored.ejercicioHora) cfgForm['recordatorio-ejercicio'].value = stored.ejercicioHora;
+  if (stored.ejercicioMeta) cfgForm['meta-ejercicio'].value = stored.ejercicioMeta;
+  if (stored.suenoHora)     cfgForm['recordatorio-sueno'].value     = stored.suenoHora;
+  if (stored.suenoMeta)     cfgForm['meta-sueno'].value     = stored.suenoMeta;
+}
+
+function startReminderLoop() {
+  setInterval(() => {
+    const rems = JSON.parse(localStorage.getItem('habit-reminders') || '{}');
+    const now  = new Date().toTimeString().slice(0, 5);
+    const email= sessionStorage.getItem('userEmail');
+    if (!email) return;
+    if (rems.aguaHora === now)      sendReminderEmail(email, 'agua', rems.aguaMeta, 'litros');
+    if (rems.ejercicioHora === now) sendReminderEmail(email, 'ejercicio', rems.ejercicioMeta, 'minutos');
+    if (rems.suenoHora === now)     sendReminderEmail(email, 'sueño', rems.suenoMeta, 'horas');
+  }, 60 * 1000);
 }

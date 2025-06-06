@@ -33,8 +33,6 @@
       <label for="signup-password">Contraseña:</label>
       <input type="password" id="signup-password" name="signup-password" required />
 
-        <label for="sueno">Sueño (horas):</label>
-        <input type="number" id="sueno" name="sueno" min="0" step="0.1" required>
       <button type="submit">Registrarme</button>
       <p id="signup-error" class="error-message"></p>
     </form>
@@ -44,7 +42,7 @@
   <!-- Botón de Logout -->
   <button id="logout" style="display: none;">Cerrar sesión</button>
 
-  <!-- Contenido principal (oculto si no hay sesión) -->
+  <!-- Contenido principal -->
   <div id="app-content" style="display: none;">
     <header>
       <h1>Hábitos Saludables</h1>
@@ -82,7 +80,7 @@
     </section>
 
     <main>
-      <!-- 1. Registro -->
+      <!-- Registro -->
       <section id="registro">
         <h2>Registro de hábitos</h2>
         <form id="registro-form">
@@ -102,7 +100,7 @@
         </form>
       </section>
 
-      <!-- 2. Estadísticas -->
+      <!-- Estadísticas -->
       <section id="estadisticas">
         <h2>Estadísticas</h2>
         <div class="charts">
@@ -113,29 +111,38 @@
         </div>
       </section>
 
-      <!-- 3. Configuración -->
+      <!-- Configuración -->
       <section id="configuracion">
         <h2>Configuración de metas y alertas</h2>
+      
         <form id="config-form">
           <label for="meta-agua">Meta diaria de agua (L):</label>
-          <input type="number" id="meta-agua" name="meta-agua" min="0" step="0.1" />
-
+          <input  type="number" id="meta-agua"      name="meta-agua"      min="0" step="0.1" required>
+      
           <label for="recordatorio-agua">Recordatorio de agua (HH:MM):</label>
-          <input type="time" id="recordatorio-agua" name="recordatorio-agua" />
-
+          <input  type="time"   id="recordatorio-agua"      name="recordatorio-agua"      required>
+      
           <label for="meta-ejercicio">Meta diaria de ejercicio (min):</label>
-          <input type="number" id="meta-ejercicio" name="meta-ejercicio" min="0" />
-
+          <input  type="number" id="meta-ejercicio" name="meta-ejercicio" min="0" required>
+      
           <label for="recordatorio-ejercicio">Recordatorio de ejercicio (HH:MM):</label>
-          <input type="time" id="recordatorio-ejercicio" name="recordatorio-ejercicio" />
-
+          <input  type="time"   id="recordatorio-ejercicio" name="recordatorio-ejercicio" required>
+      
           <label for="meta-sueno">Meta diaria de sueño (horas):</label>
-          <input type="number" id="meta-sueno" name="meta-sueno" min="0" step="0.1" />
-
+          <input  type="number" id="meta-sueno"   name="meta-sueno"   min="0" step="0.1" required>
+      
           <label for="recordatorio-sueno">Recordatorio de sueño (HH:MM):</label>
-          <input type="time" id="recordatorio-sueno" name="recordatorio-sueno" />
+          <input  type="time"   id="recordatorio-sueno"   name="recordatorio-sueno"   required>
+      
+          <button type="submit"
+                  id="btn-guardar-recordatorios"
+                  class="btn-primary" 
+                  >
+            Registrar recordatorios
+          </button>
         </form>
       </section>
+      
     </main>
 
     <footer>
@@ -143,9 +150,14 @@
     </footer>
   </div>
 
-  <!-- Chart.js (CDN) -->
+  
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Lógica JavaScript -->
   <script src="../JavaScript/script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    (function () {
+      emailjs.init({ publicKey: '77nm1jj0tkky0hsTt' }); 
+    })();
+  </script>
 </body>
 </html>

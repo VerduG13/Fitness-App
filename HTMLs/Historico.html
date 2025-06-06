@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="../CSS/styles.css" />
 </head>
 <body>
-  <!-- Sección de Login (oculta si hay sesión activa) -->
+  <!-- Sección de Login -->
   <section id="login-section">
     <h2>Iniciar sesión</h2>
     <form id="login-form">
@@ -23,7 +23,7 @@
     <p>¿No tienes cuenta? <a href="#" id="show-signup">Regístrate</a></p>
   </section>
 
-  <!-- Sección de Signup (oculta si hay sesión activa) -->
+  <!-- Sección de Signup -->
   <section id="signup-section" style="display: none;">
     <h2>Crear cuenta</h2>
     <form id="signup-form">
@@ -42,7 +42,7 @@
   <!-- Botón de Logout -->
   <button id="logout" style="display: none;">Cerrar sesión</button>
 
-  <!-- Contenido principal (oculto si no hay sesión) -->
+  <!-- Contenido principal -->
   <div id="app-content" style="display: none;">
     <header>
       <h1>Histórico de Hábitos</h1>
@@ -79,9 +79,7 @@
     </footer>
   </div>
 
-  <!-- Chart.js (CDN) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Lógica JavaScript -->
   <script src="../JavaScript/script.js"></script>
 </body>
 </html>
