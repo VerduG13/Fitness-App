@@ -155,3 +155,38 @@ footer {
   background: #fff;
   border-top: 1px solid var(--gris-medio);
 }
+
+#historico table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+}
+
+#historico th,
+#historico td {
+  padding: 0.75rem 1rem;
+  text-align: center;
+  border-bottom: 1px solid var(--gris-medio);
+}
+
+#historico thead {
+  background-color: var(--gris-medio);
+}
+
+#historico thead th {
+  color: var(--gris-texto);
+  font-weight: 600;
+}
+
+#historico tbody tr:nth-child(even) {
+  background-color: var(--gris-claro);
+}
+
+#historico tbody tr:hover {
+  background-color: #ececec;
+}
+
+#historico tbody td {
+  vertical-align: middle;
+}
